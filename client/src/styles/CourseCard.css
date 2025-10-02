@@ -1,0 +1,24 @@
+.course-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.course-card-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin: 0 0 8px;
+}
+
+.course-card-meta {
+  font-size: 0.9rem;
+  color: #666;
+}

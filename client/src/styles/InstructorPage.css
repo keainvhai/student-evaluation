@@ -1,0 +1,72 @@
+.instructor-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  /* border-radius: 12px; */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.dashboard-title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-container input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  /* border-radius: 6px; */
+}
+
+.form-container button {
+  padding: 8px 12px;
+  background-color: #7874c9;
+  color: white;
+  border: none;
+  /* border-radius: 6px; */
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.form-container button:disabled {
+  background-color: #a5b4fc;
+  cursor: not-allowed;
+}
+
+.form-container button:hover:not(:disabled) {
+  background-color: #5651c7;
+}
+
+.course-list {
+  list-style: none;
+  padding: 0;
+}
+
+.course-item {
+  background: white;
+  border: 1px solid #ddd;
+  /* border-radius: 8px; */
+  margin-bottom: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.course-title {
+  /* font-weight: bold; */
+  color: #111;
+}
+
+.join-token {
+  font-size: 0.9em;
+  color: #666;
+}
