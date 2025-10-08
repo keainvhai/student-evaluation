@@ -81,4 +81,40 @@ router.get("/:courseId/teams", requireAuth, async (req, res) => {
   res.json(teams);
 });
 
+// ✅ 创建 Team
+router.post("/:courseId/teams", requireAuth, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { name } = req.body;
+    if (!name) return res.status(400).json({ error: "Missing team name" });
+
+    const team = await db.Team.create({ CourseId: courseId, name });
+    await db.TeamMembership.create({ TeamId: team.id, UserId: req.user.id });
+    res.json(team);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to create team" });
+  }
+});
+
+// ✅ 获取课程下所有 Teams
+router.get("/:courseId/teams", requireAuth, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const teams = await db.Team.findAll({
+      where: { CourseId: courseId },
+      include: [
+        {
+          model: db.TeamMembership,
+          include: [{ model: db.User, attributes: ["id", "name", "email"] }],
+        },
+      ],
+    });
+    res.json(teams);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch teams" });
+  }
+});
+
 module.exports = router;

@@ -27,10 +27,7 @@ export default function CoursePage() {
   const createTeam = async () => {
     if (!newTeamName) return;
     try {
-      const res = await api.post("/teams", {
-        courseId: id,
-        name: newTeamName,
-      });
+      const res = await api.post(`/courses/${id}/teams`, { name: newTeamName });
       setTeams([...teams, res.data]);
       setNewTeamName("");
     } catch (err) {
