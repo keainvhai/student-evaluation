@@ -13,10 +13,17 @@ import CoursePage from "./pages/CoursePage";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
+import { useEffect } from "react";
+import { useAuthStore } from "./store/auth";
 
 function AppContent() {
   const location = useLocation();
   const hideNavbar = location.pathname === "/login";
+  const fetchMe = useAuthStore((s) => s.fetchMe);
+
+  useEffect(() => {
+    fetchMe(); // 每次刷新自动验证 token 并恢复登录状态
+  }, [fetchMe]);
 
   return (
     <>

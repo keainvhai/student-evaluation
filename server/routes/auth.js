@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../models");
+const { requireAuth } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -53,6 +54,15 @@ router.post("/login", async (req, res) => {
     { expiresIn: "7d" }
   );
   res.json({ token, user });
+});
+
+// 获取当前登录用户信息
+router.get("/me", requireAuth, async (req, res) => {
+  const user = await db.User.findByPk(req.user.id, {
+    attributes: ["id", "name", "email", "role"],
+  });
+  if (!user) return res.status(404).json({ error: "User not found" });
+  res.json(user);
 });
 
 module.exports = router;
