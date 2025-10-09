@@ -8,7 +8,7 @@ const router = express.Router();
 
 // 注册
 router.post("/register", async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, roles, student_id } = req.body;
   try {
     const hash = await bcrypt.hash(password, 8);
     const user = await db.User.create({
@@ -16,6 +16,7 @@ router.post("/register", async (req, res) => {
       email,
       passwordHash: hash,
       role,
+      student_id: role === "student" ? student_id : null,
     });
 
     // 注册完成直接返回 token
@@ -32,6 +33,7 @@ router.post("/register", async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        student_id: user.student_id,
       },
     });
   } catch (err) {

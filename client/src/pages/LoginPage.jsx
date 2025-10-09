@@ -9,13 +9,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState("student");
+  const [studentId, setStudentId] = useState("");
   const [isRegister, setIsRegister] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isRegister) {
-      await register(name, email, password, role);
+      await register(name, email, password, role, studentId);
       alert("Registered! Please login.");
       setIsRegister(false);
     } else {
@@ -41,11 +42,25 @@ export default function LoginPage() {
       <h2 className="login-title">{isRegister ? "Register" : "Login"}</h2>
       <form className="login-form" onSubmit={handleSubmit}>
         {isRegister && (
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Name"
-          />
+          <>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Name"
+            />
+            <select value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="student">Student</option>
+              <option value="instructor">Instructor</option>
+            </select>
+            {/* ✅ 只有学生时显示学号输入 */}
+            {role === "student" && (
+              <input
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
+                placeholder="Student ID"
+              />
+            )}
+          </>
         )}
         <input
           value={email}
@@ -58,12 +73,7 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
         />
-        {isRegister && (
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="student">Student</option>
-            <option value="instructor">Instructor</option>
-          </select>
-        )}
+
         <button type="submit" className="submit-btn">
           {isRegister ? "Register" : "Login"}
         </button>

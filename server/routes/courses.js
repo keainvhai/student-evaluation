@@ -74,13 +74,6 @@ router.get("/joined", requireAuth, requireRole("student"), async (req, res) => {
   }
 });
 
-// 获取课程所有小组
-router.get("/:courseId/teams", requireAuth, async (req, res) => {
-  const { courseId } = req.params;
-  const teams = await db.Team.findAll({ where: { courseId } });
-  res.json(teams);
-});
-
 // ✅ 创建 Team
 router.post("/:courseId/teams", requireAuth, async (req, res) => {
   try {

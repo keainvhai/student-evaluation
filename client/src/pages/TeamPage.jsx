@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api";
+import { useAuthStore } from "../store/auth";
+import "../styles/TeamPage.css";
 
 export default function TeamPage() {
   const { id } = useParams(); // teamId
+  const { user } = useAuthStore(); // current User
   const [team, setTeam] = useState(null); // 当前小组对象
   const [members, setMembers] = useState([]); // 小组成员数组
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState("");
+
   const [evaluateeId, setEvaluateeId] = useState(""); // 被评价者的 ID
   const [score, setScore] = useState(5); // 打分（默认 5）
   const [comment, setComment] = useState(""); // 评价文字
@@ -25,6 +32,34 @@ export default function TeamPage() {
     fetchTeam();
   }, [id]);
 
+  // 公共函数
+  const showMessage = (text) => {
+    setMessage(text);
+    setTimeout(() => setMessage(""), 2500); // 2.5 秒后自动消失
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setNewName(team.name);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setNewName("");
+  };
+
+  const saveTeamName = async () => {
+    try {
+      const res = await api.patch(`/teams/${id}`, { name: newName });
+      setTeam({ ...team, name: newName });
+      setIsEditing(false);
+      showMessage("Team name updated!");
+    } catch (err) {
+      console.error(err);
+      showMessage("❌ Failed to update team name");
+    }
+  };
+
   const submitEvaluation = async () => {
     try {
       await api.post("/evaluations", {
@@ -34,19 +69,56 @@ export default function TeamPage() {
         comment,
         anonymousToPeers: true,
       });
-      setMessage("✅ Evaluation submitted!");
+      showMessage("Evaluation submitted!");
       setComment("");
     } catch (err) {
       console.error(err);
-      setMessage("❌ Failed to submit");
+      showMessage("❌ Failed to submit");
     }
   };
 
   if (!team) return <p>Loading...</p>;
 
+  const isMember = members.some((m) => m.id === user?.id);
+
   return (
-    <div>
-      <h2>Team: {team.name}</h2>
+    <div className="team-page">
+      <h2>
+        Team:
+        {isEditing ? (
+          <>
+            <input
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              style={{ marginLeft: "8px" }}
+            />
+            <button className="save-btn" onClick={saveTeamName}>
+              Save
+            </button>
+            <button className="cancel-btn" onClick={handleCancel}>
+              Cancel
+            </button>
+          </>
+        ) : (
+          <>
+            {" "}
+            {team.name}{" "}
+            {isMember && (
+              <button className="edit-btn" onClick={handleEdit}>
+                ✏️
+              </button>
+            )}
+          </>
+        )}
+      </h2>
+
+      {message && (
+        <div
+          className={`toast ${message.startsWith("✅") ? "success" : "error"}`}
+        >
+          {message}
+        </div>
+      )}
 
       <h3>Members</h3>
       <ul>
@@ -65,11 +137,13 @@ export default function TeamPage() {
           onChange={(e) => setEvaluateeId(e.target.value)}
         >
           <option value="">--select--</option>
-          {members.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.name}
-            </option>
-          ))}
+          {members
+            .filter((m) => m.id !== user?.id)
+            .map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
+            ))}
         </select>
       </div>
 
@@ -91,9 +165,47 @@ export default function TeamPage() {
           onChange={(e) => setComment(e.target.value)}
         />
       </div>
+      <button className="submit-btn" onClick={submitEvaluation}>
+        Submit
+      </button>
 
-      <button onClick={submitEvaluation}>Submit</button>
-      {message && <p>{message}</p>}
+      {/* {message && <p>{message}</p>} */}
+      <h3>Seek Evaluation</h3>
+      <div>
+        <label>Ask this member to evaluate me:</label>
+        <select
+          value={evaluateeId}
+          onChange={(e) => setEvaluateeId(e.target.value)}
+        >
+          <option value="">--select--</option>
+          {members
+            .filter((m) => m.id !== user?.id)
+            .map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
+            ))}
+        </select>
+
+        <button
+          className="request-btn"
+          onClick={async () => {
+            if (!evaluateeId)
+              return setMessage("❌ Please choose a member first.");
+            try {
+              // 未来这里改成： await api.post(`/teams/${id}/evaluation-requests`, {...})
+              console.log(`Request sent to user ${evaluateeId}`);
+              setMessage("✅ Evaluation request sent!");
+              setTimeout(() => setMessage(""), 2500);
+            } catch (err) {
+              console.error(err);
+              setMessage("❌ Failed to send request");
+            }
+          }}
+        >
+          Request Evaluation
+        </button>
+      </div>
     </div>
   );
 }

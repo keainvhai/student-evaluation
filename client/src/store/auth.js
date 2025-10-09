@@ -25,8 +25,14 @@ export const useAuthStore = create((set) => ({
   //   return user;
   // },
 
-  register: async (name, email, password, role) => {
-    await api.post("/auth/register", { name, email, password, role });
+  register: async (name, email, password, role, student_id) => {
+    await api.post("/auth/register", {
+      name,
+      email,
+      password,
+      role,
+      student_id,
+    });
   },
 
   // ✅ 新增：刷新后自动验证并恢复用户
