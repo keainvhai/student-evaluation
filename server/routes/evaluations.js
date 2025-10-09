@@ -5,8 +5,10 @@ const db = require("../models");
 const router = express.Router();
 
 // 给队友打分
-router.post("/", requireAuth, async (req, res) => {
-  const { teamId, evaluateeId, score, comment, anonymousToPeers } = req.body;
+router.post("/teams/:teamId/evaluations", requireAuth, async (req, res) => {
+  const { evaluateeId, score, comment, anonymousToPeers } = req.body;
+  const teamId = req.params.teamId;
+
   const evalObj = await db.Evaluation.create({
     teamId,
     evaluatorId: req.user.id,

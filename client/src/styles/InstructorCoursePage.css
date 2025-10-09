@@ -1,0 +1,103 @@
+.instructor-course-page {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 24px;
+  font-family: "Inter", sans-serif;
+  color: #333;
+}
+
+.page-title {
+  font-size: 28px;
+  margin-bottom: 4px;
+  color: #312e81;
+}
+
+.course-meta {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* 卡片区块 */
+.card-section {
+  background: #ffffff;
+  padding: 16px 20px;
+  /* border-radius: 10px; */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+  transition: all 0.2s ease-in-out;
+}
+
+.card-section:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.token-display {
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.button-group button,
+.toggle-btn,
+.view-team {
+  margin-right: 10px;
+  padding: 6px 12px;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  /* border-radius: 6px; */
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.button-group button:hover,
+.toggle-btn:hover,
+.view-team:hover {
+  background-color: #4f46e5;
+}
+
+.qr-section {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.roster-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 10px;
+}
+
+.roster-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.email {
+  color: #555;
+  font-size: 0.9em;
+}
+
+.team-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* .team-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.team-item span {
+  font-weight: 500;
+  color: #333;
+} */

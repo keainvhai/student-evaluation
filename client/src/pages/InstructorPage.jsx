@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 import "../styles/InstructorPage.css";
+import { Link } from "react-router-dom";
+import CourseCard from "../components/CourseCard";
 
 export default function InstructorPage() {
   const [courses, setCourses] = useState([]);
@@ -63,14 +65,16 @@ export default function InstructorPage() {
         </button>
       </div>
 
-      <ul className="course-list">
-        {courses.map((c) => (
-          <li key={c.id} className="course-item">
-            <span className="course-title">{c.title}</span>
-            <span className="join-token">Token: {c.joinToken}</span>
-          </li>
-        ))}
-      </ul>
+      <h3 className="course-header">My Courses</h3>
+      {courses.length === 0 ? (
+        <p className="empty-msg">You haven't created any courses yet.</p>
+      ) : (
+        <div className="course-grid">
+          {courses.map((c) => (
+            <CourseCard key={c.id} course={c} isInstructor={true} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

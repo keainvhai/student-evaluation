@@ -8,7 +8,7 @@ const router = express.Router();
 
 // 注册
 router.post("/register", async (req, res) => {
-  const { name, email, password, roles, student_id } = req.body;
+  const { name, email, password, role, studentId } = req.body;
   try {
     const hash = await bcrypt.hash(password, 8);
     const user = await db.User.create({
@@ -16,7 +16,7 @@ router.post("/register", async (req, res) => {
       email,
       passwordHash: hash,
       role,
-      student_id: role === "student" ? student_id : null,
+      studentId: role === "student" ? studentId : null,
     });
 
     // 注册完成直接返回 token
@@ -33,7 +33,7 @@ router.post("/register", async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        student_id: user.student_id,
+        studentId: user.studentId,
       },
     });
   } catch (err) {
@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
 // 获取当前登录用户信息
 router.get("/me", requireAuth, async (req, res) => {
   const user = await db.User.findByPk(req.user.id, {
-    attributes: ["id", "name", "email", "role"],
+    attributes: ["id", "name", "email", "role", "studentId"],
   });
   if (!user) return res.status(404).json({ error: "User not found" });
   res.json(user);

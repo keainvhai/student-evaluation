@@ -62,8 +62,7 @@ export default function TeamPage() {
 
   const submitEvaluation = async () => {
     try {
-      await api.post("/evaluations", {
-        teamId: id,
+      await api.post(`/teams/${id}/evaluations`, {
         evaluateeId,
         score,
         comment,
@@ -193,7 +192,9 @@ export default function TeamPage() {
             if (!evaluateeId)
               return setMessage("❌ Please choose a member first.");
             try {
-              // 未来这里改成： await api.post(`/teams/${id}/evaluation-requests`, {...})
+              await api.post(`/teams/${id}/evaluation-requests`, {
+                requestee_id: evaluateeId,
+              });
               console.log(`Request sent to user ${evaluateeId}`);
               setMessage("✅ Evaluation request sent!");
               setTimeout(() => setMessage(""), 2500);

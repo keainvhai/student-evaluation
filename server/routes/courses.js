@@ -1,5 +1,6 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
+const QRCode = require("qrcode");
 const { requireAuth, requireRole } = require("../middleware/auth");
 const db = require("../models");
 
@@ -109,5 +110,81 @@ router.get("/:courseId/teams", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Failed to fetch teams" });
   }
 });
+
+// ✅ 老师查看课程学生
+router.get(
+  "/:courseId/roster",
+  requireAuth,
+  requireRole("instructor"),
+  async (req, res) => {
+    try {
+      const { courseId } = req.params;
+
+      // 找出课程及已选学生
+      const enrollments = await db.Enrollment.findAll({
+        where: { CourseId: courseId },
+        include: [
+          { model: db.User, attributes: ["id", "name", "email", "studentId"] },
+        ],
+      });
+
+      const roster = enrollments.map((e) => e.User);
+      res.json(roster);
+    } catch (err) {
+      console.error("❌ Failed to fetch roster:", err);
+      res.status(500).json({ error: "Server error fetching roster" });
+    }
+  }
+);
+
+// ✅ 刷新 Join Token
+router.post(
+  "/:courseId/join-token/rotate",
+  requireAuth,
+  requireRole("instructor"),
+  async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const newToken = uuidv4();
+
+      const course = await db.Course.findByPk(courseId);
+      if (!course) return res.status(404).json({ error: "Course not found" });
+
+      // 仅允许课程创建者刷新
+      if (course.instructorId !== req.user.id)
+        return res.status(403).json({ error: "Not authorized" });
+
+      course.joinToken = newToken;
+      await course.save();
+
+      res.json({ joinToken: newToken });
+    } catch (err) {
+      console.error("❌ Failed to rotate token:", err);
+      res.status(500).json({ error: "Failed to rotate join token" });
+    }
+  }
+);
+
+// ✅ 生成课程 Join QR
+router.get(
+  "/:courseId/join-qr",
+  requireAuth,
+  requireRole("instructor"),
+  async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const course = await db.Course.findByPk(courseId);
+      if (!course) return res.status(404).json({ error: "Course not found" });
+
+      const joinUrl = `${process.env.CORS_ORIGIN}/join/${course.joinToken}`;
+      const qrDataUrl = await QRCode.toDataURL(joinUrl);
+
+      res.json({ joinUrl, qrDataUrl });
+    } catch (err) {
+      console.error("❌ Failed to generate QR:", err);
+      res.status(500).json({ error: "Server error generating QR" });
+    }
+  }
+);
 
 module.exports = router;

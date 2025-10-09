@@ -25,6 +25,7 @@ db.Enrollment = require("./enrollment")(sequelize, DataTypes);
 db.Team = require("./team")(sequelize, DataTypes);
 db.TeamMembership = require("./teamMembership")(sequelize, DataTypes);
 db.Evaluation = require("./evaluation")(sequelize, DataTypes);
+db.EvaluationRequest = require("./EvaluationRequest")(sequelize, DataTypes);
 
 // 关联
 db.Course.belongsTo(db.User, { as: "instructor", foreignKey: "instructorId" });
@@ -56,6 +57,28 @@ db.Evaluation.belongsTo(db.User, {
 db.Evaluation.belongsTo(db.User, {
   as: "evaluatee",
   foreignKey: "evaluateeId",
+});
+
+// ===== EvaluationRequest 关联 =====
+db.EvaluationRequest.belongsTo(db.Team, { foreignKey: "teamId" });
+db.Team.hasMany(db.EvaluationRequest, { foreignKey: "teamId" });
+
+db.EvaluationRequest.belongsTo(db.User, {
+  as: "Requester",
+  foreignKey: "requesterId",
+});
+db.User.hasMany(db.EvaluationRequest, {
+  as: "RequestsSent",
+  foreignKey: "requesterId",
+});
+
+db.EvaluationRequest.belongsTo(db.User, {
+  as: "Requestee",
+  foreignKey: "requesteeId",
+});
+db.User.hasMany(db.EvaluationRequest, {
+  as: "RequestsReceived",
+  foreignKey: "requesteeId",
 });
 
 module.exports = db;

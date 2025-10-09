@@ -13,7 +13,8 @@ app.use(express.json());
 app.use("/auth", require("./routes/auth"));
 app.use("/courses", require("./routes/courses"));
 app.use("/teams", require("./routes/teams"));
-app.use("/evaluations", require("./routes/evaluations"));
+app.use("/", require("./routes/evaluationRequests"));
+app.use("/", require("./routes/evaluations"));
 
 app.get("/health", (req, res) => res.json({ ok: true }));
 

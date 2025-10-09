@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/auth";
+import InstructorCoursePage from "./pages/InstructorCoursePage";
 
 function AppContent() {
   const location = useLocation();
@@ -40,6 +41,11 @@ function AppContent() {
           }
         />
         <Route
+          path="/instructor/courses/:id"
+          element={<InstructorCoursePage />}
+        />
+
+        <Route
           path="/student"
           element={
             <ProtectedRoute role="student">
@@ -57,10 +63,11 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/teams/:id"
           element={
-            <ProtectedRoute role="student">
+            <ProtectedRoute role={["student", "instructor"]}>
               <TeamPage />
             </ProtectedRoute>
           }
