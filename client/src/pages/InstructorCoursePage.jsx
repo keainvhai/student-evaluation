@@ -14,6 +14,8 @@ export default function InstructorCoursePage() {
   const [showRoster, setShowRoster] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [loadingAI, setLoadingAI] = useState(false);
+
   const [description, setDescription] = useState("");
   const [editingDesc, setEditingDesc] = useState(false);
 
@@ -48,6 +50,21 @@ export default function InstructorCoursePage() {
     } catch (err) {
       console.error(err);
       alert("❌ Failed to update description");
+    }
+  };
+  const generateWithAI = async () => {
+    try {
+      setLoadingAI(true);
+      const res = await api.post("/ai/generate", {
+        type: "course-description",
+        payload: { title: course.title },
+      });
+      setDescription(res.data.content);
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to generate with AI");
+    } finally {
+      setLoadingAI(false);
     }
   };
 
@@ -87,6 +104,41 @@ export default function InstructorCoursePage() {
       <h2 className="page-title">{course.title}</h2>
       <p className="course-meta">Course Code: {course.code}</p>
 
+      {/* --- AI Assistant Section --- */}
+      <section className="card-section">
+        <div className="section-header">
+          <h3>AI Assistant</h3>
+        </div>
+
+        <p>
+          Status:{" "}
+          <strong style={{ color: course.aiEnabled ? "green" : "gray" }}>
+            {course.aiEnabled ? "Enabled ✅" : "Disabled ❌"}
+          </strong>
+        </p>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={course.aiEnabled}
+            onChange={async (e) => {
+              try {
+                const newValue = e.target.checked;
+                await api.patch(`/courses/${id}/ai-enabled`, {
+                  aiEnabled: newValue,
+                });
+                setCourse({ ...course, aiEnabled: newValue });
+                alert(`AI Assistant ${newValue ? "enabled" : "disabled"}!`);
+              } catch (err) {
+                console.error(err);
+                alert("❌ Failed to update AI Assistant setting");
+              }
+            }}
+          />{" "}
+          Enable AI Assistant for this course
+        </label>
+      </section>
+
       {/* --- Description Section --- */}
       <section className="card-section">
         <div className="section-header">
@@ -98,6 +150,13 @@ export default function InstructorCoursePage() {
             </button>
           ) : (
             <div className="desc-buttons">
+              <button
+                className="btn-ai"
+                onClick={generateWithAI}
+                disabled={loadingAI}
+              >
+                {loadingAI ? "Generating..." : "✨ Generate with AI"}
+              </button>
               <button className="btn-save" onClick={saveDescription}>
                 Save
               </button>

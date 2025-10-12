@@ -10,6 +10,8 @@ export default function InstructorPage() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [aiEnabled, setAiEnabled] = useState(false);
+
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -31,7 +33,7 @@ export default function InstructorPage() {
 
     setLoading(true);
     try {
-      const res = await api.post("/courses", { title, code });
+      const res = await api.post("/courses", { title, code, aiEnabled });
       setCourses([...courses, res.data]);
       setTitle("");
       setCode("");
@@ -60,6 +62,14 @@ export default function InstructorPage() {
           onChange={(e) => setCode(e.target.value)}
           placeholder="Course code"
         />
+        <label>
+          <input
+            type="checkbox"
+            checked={aiEnabled}
+            onChange={(e) => setAiEnabled(e.target.checked)}
+          />
+          Enable AI Assistant
+        </label>
         <button onClick={createCourse} disabled={loading}>
           {loading ? "Creating..." : "Create Course"}
         </button>

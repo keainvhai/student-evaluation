@@ -42,11 +42,17 @@ router.delete("/:teamId/members", requireAuth, async (req, res) => {
 router.get("/:teamId", requireAuth, async (req, res) => {
   const { teamId } = req.params;
   const team = await db.Team.findByPk(teamId, {
-    include: {
-      model: db.TeamMembership,
-      // include: db.User,
-      include: [{ model: db.User }],
-    },
+    include: [
+      {
+        model: db.TeamMembership,
+        // include: db.User,
+        include: [{ model: db.User }],
+      },
+      {
+        model: db.Course, // ✅ 加这一行
+        attributes: ["id", "title", "aiEnabled"],
+      },
+    ],
   });
   if (!team) return res.status(404).json({ error: "Team not found" });
   res.json(team);

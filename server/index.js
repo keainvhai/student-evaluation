@@ -15,6 +15,7 @@ app.use("/courses", require("./routes/courses"));
 app.use("/teams", require("./routes/teams"));
 app.use("/", require("./routes/evaluationRequests"));
 app.use("/", require("./routes/evaluations"));
+app.use("/ai", require("./routes/ai"));
 
 app.get("/health", (req, res) => res.json({ ok: true }));
 

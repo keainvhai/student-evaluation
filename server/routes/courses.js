@@ -8,13 +8,14 @@ const router = express.Router();
 
 // 老师建课
 router.post("/", requireAuth, requireRole("instructor"), async (req, res) => {
-  const { title, code } = req.body;
+  const { title, code, aiEnabled } = req.body;
   const joinToken = uuidv4();
   const course = await db.Course.create({
     title,
     code,
     joinToken,
     instructorId: req.user.id,
+    aiEnabled: !!aiEnabled,
   });
   res.json(course);
 });
@@ -74,6 +75,33 @@ router.patch(
     } catch (err) {
       console.error("❌ Failed to update course description:", err);
       res.status(500).json({ error: "Server error updating description" });
+    }
+  }
+);
+
+// ✅ 更新 AI Assistant 开关
+router.patch(
+  "/:id/ai-enabled",
+  requireAuth,
+  requireRole("instructor"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { aiEnabled } = req.body;
+
+      const course = await db.Course.findByPk(id);
+      if (!course) return res.status(404).json({ error: "Course not found" });
+
+      course.aiEnabled = !!aiEnabled;
+      await course.save();
+
+      res.json({
+        message: "AI Assistant setting updated",
+        aiEnabled: course.aiEnabled,
+      });
+    } catch (err) {
+      console.error("❌ Failed to update aiEnabled:", err);
+      res.status(500).json({ error: "Server error updating aiEnabled" });
     }
   }
 );

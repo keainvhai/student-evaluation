@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import api from "../api";
 import { useAuthStore } from "../store/auth";
 import "../styles/TeamPage.css";
+import FloatingAIAssistant from "../components/FloatingAIAssistant";
 
 export default function TeamPage() {
   const { id } = useParams(); // teamId
@@ -17,6 +18,8 @@ export default function TeamPage() {
   const [score, setScore] = useState(5); // 打分（默认 5）
   const [comment, setComment] = useState(""); // 评价文字
   const [message, setMessage] = useState(""); // 提交后的提示信息
+
+  const [anonymous, setAnonymous] = useState(true); // ✅ 默认匿名
 
   // 获取小组信息
   useEffect(() => {
@@ -66,9 +69,9 @@ export default function TeamPage() {
         evaluateeId,
         score,
         comment,
-        anonymousToPeers: true,
+        anonymousToPeers: anonymous,
       });
-      showMessage("Evaluation submitted!");
+      showMessage("✅ Evaluation submitted!");
       setComment("");
     } catch (err) {
       console.error(err);
@@ -128,7 +131,18 @@ export default function TeamPage() {
         ))}
       </ul>
 
-      <h3>Give Evaluation</h3>
+      <div className="evaluation-header">
+        <h3>Give Evaluation</h3>
+        <label className="anon-toggle-inline">
+          <input
+            type="checkbox"
+            checked={anonymous}
+            onChange={(e) => setAnonymous(e.target.checked)}
+          />
+          anonymously
+        </label>
+      </div>
+
       <div>
         <label>Choose member:</label>
         <select
@@ -164,9 +178,20 @@ export default function TeamPage() {
           onChange={(e) => setComment(e.target.value)}
         />
       </div>
+
       <button className="submit-btn" onClick={submitEvaluation}>
         Submit
       </button>
+
+      {/* AI 助手（条件渲染） */}
+      {team?.Course?.aiEnabled && (
+        <FloatingAIAssistant
+          evaluateeName={
+            members.find((m) => m.id === Number(evaluateeId))?.name ||
+            "teammate"
+          }
+        />
+      )}
 
       {/* {message && <p>{message}</p>} */}
       <h3>Seek Evaluation</h3>

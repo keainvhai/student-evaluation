@@ -7,10 +7,12 @@ const router = express.Router();
 // 给队友打分
 router.post("/teams/:teamId/evaluations", requireAuth, async (req, res) => {
   const { evaluateeId, score, comment, anonymousToPeers } = req.body;
+  console.log("📝 Received evaluation:", req.body);
+
   const teamId = req.params.teamId;
 
   const evalObj = await db.Evaluation.create({
-    teamId,
+    TeamId: teamId,
     evaluatorId: req.user.id,
     evaluateeId,
     score,

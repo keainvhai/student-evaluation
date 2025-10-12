@@ -7,5 +7,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT, // 用 TEXT 比 STRING 更适合存课程简介
       allowNull: true,
     },
+    aiEnabled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false, // 默认禁用
+    },
   });
 };

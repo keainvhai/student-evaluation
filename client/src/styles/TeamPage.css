@@ -104,9 +104,30 @@
   font-weight: 600;
 }
 
+.evaluation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.anon-toggle-inline {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap: 6px;
+  cursor: pointer;
+  color: #374151;
+}
+
+.anon-toggle-inline input {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
 /* 表单控件样式 */
 .team-page label {
-  display: block;
+  /* display: block; */
   margin-top: 0.5rem;
   font-weight: 500;
 }
