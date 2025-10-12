@@ -19,7 +19,7 @@ app.use("/", require("./routes/evaluations"));
 app.get("/health", (req, res) => res.json({ ok: true }));
 
 // connect db and strat
-db.sequelize.sync().then(() => {
+db.sequelize.sync({ alter: false }).then(() => {
   app.listen(process.env.PORT || 3001, () => {
     console.log(`✅ Server running on port ${process.env.PORT || 3001}`);
   });

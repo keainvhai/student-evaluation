@@ -1,6 +1,6 @@
 .instructor-course-page {
   max-width: 900px;
-  margin: 40px auto;
+  /* margin: 40px auto; */
   padding: 24px;
   font-family: "Inter", sans-serif;
   color: #333;
@@ -9,12 +9,28 @@
 .page-title {
   font-size: 28px;
   margin-bottom: 4px;
+  margin-top: 4px;
   color: #312e81;
 }
 
 .course-meta {
   color: #666;
   margin-bottom: 24px;
+}
+
+.course-desc {
+  margin-top: 8px;
+  color: #444;
+  white-space: pre-wrap;
+}
+
+.desc-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+  resize: vertical;
 }
 
 /* 卡片区块 */
@@ -31,11 +47,86 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
+.card-section h3 {
+  margin: 1px;
+}
+
+/* === Description Section === */
+.course-desc {
+  margin-top: 8px;
+  color: #444;
+  white-space: pre-wrap;
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.desc-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  /* border-radius: 6px; */
+  font-family: inherit;
+  resize: vertical;
+  margin-top: 8px;
+}
+
+/* 按钮区域 */
+.desc-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit,
+.btn-save,
+.btn-cancel {
+  padding: 6px 12px;
+  border: none;
+  /* border-radius: 6px; */
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+/* 不同状态颜色 */
+.btn-edit {
+  background-color: #7874c9;
+  color: white;
+}
+
+.btn-save {
+  /* background-color: #4caf50; */
+  /* color: white; */
+}
+
+.btn-cancel {
+  /* background-color: #f44336; */
+  /* color: white; */
+}
+
+/* 悬停效果 */
+.btn-edit:hover {
+  background-color: #615dc0;
+}
+
+.btn-save:hover {
+  background-color: #d6d6d6;
+}
+
+.btn-cancel:hover {
+  background-color: #d6d6d6;
+}
+
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
+}
+
+.section-header h3 {
+  margin: 1px;
 }
 
 .token-display {

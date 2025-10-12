@@ -50,6 +50,34 @@ router.get(
   }
 );
 
+// ✅ 老师更新课程描述
+router.patch(
+  "/:courseId/description",
+  requireAuth,
+  requireRole("instructor"),
+  async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const { description } = req.body;
+
+      const course = await db.Course.findByPk(courseId);
+      if (!course) return res.status(404).json({ error: "Course not found" });
+
+      // 只能修改自己创建的课程
+      if (course.instructorId !== req.user.id)
+        return res.status(403).json({ error: "Not authorized" });
+
+      course.description = description || "";
+      await course.save();
+
+      res.json({ message: "✅ Course description updated", course });
+    } catch (err) {
+      console.error("❌ Failed to update course description:", err);
+      res.status(500).json({ error: "Server error updating description" });
+    }
+  }
+);
+
 // 学生获取自己加入的课程
 router.get("/joined", requireAuth, requireRole("student"), async (req, res) => {
   try {

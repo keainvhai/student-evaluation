@@ -3,5 +3,9 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     code: DataTypes.STRING,
     joinToken: DataTypes.STRING,
+    description: {
+      type: DataTypes.TEXT, // 用 TEXT 比 STRING 更适合存课程简介
+      allowNull: true,
+    },
   });
 };

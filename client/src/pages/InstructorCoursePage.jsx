@@ -14,12 +14,16 @@ export default function InstructorCoursePage() {
   const [showRoster, setShowRoster] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [description, setDescription] = useState("");
+  const [editingDesc, setEditingDesc] = useState(false);
+
   useEffect(() => {
     async function fetchData() {
       try {
         const resCourses = await api.get("/courses/mine");
         const found = resCourses.data.find((c) => c.id === Number(id));
         setCourse(found);
+        setDescription(found?.description || "");
         setJoinToken(found?.joinToken);
 
         const [resRoster, resTeams] = await Promise.all([
@@ -35,6 +39,17 @@ export default function InstructorCoursePage() {
     }
     fetchData();
   }, [id]);
+
+  const saveDescription = async () => {
+    try {
+      await api.patch(`/courses/${id}/description`, { description });
+      alert("✅ Description updated!");
+      setEditingDesc(false);
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to update description");
+    }
+  };
 
   const rotateToken = async () => {
     try {
@@ -71,6 +86,48 @@ export default function InstructorCoursePage() {
     <div className="instructor-course-page">
       <h2 className="page-title">{course.title}</h2>
       <p className="course-meta">Course Code: {course.code}</p>
+
+      {/* --- Description Section --- */}
+      <section className="card-section">
+        <div className="section-header">
+          <h3>Course Description</h3>
+
+          {!editingDesc ? (
+            <button className="btn-edit" onClick={() => setEditingDesc(true)}>
+              Edit
+            </button>
+          ) : (
+            <div className="desc-buttons">
+              <button className="btn-save" onClick={saveDescription}>
+                Save
+              </button>
+              <button
+                className="btn-cancel"
+                onClick={() => {
+                  setEditingDesc(false);
+                  setDescription(course.description || ""); // 恢复原值
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+
+        {!editingDesc ? (
+          <p className="course-desc">
+            {description ? description : "No description yet."}
+          </p>
+        ) : (
+          <textarea
+            className="desc-input"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
+            placeholder="Enter course description..."
+          />
+        )}
+      </section>
 
       {/* --- Join Section --- */}
       <section className="card-section">
