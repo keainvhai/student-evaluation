@@ -16,6 +16,7 @@ import "./App.css";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/auth";
 import InstructorCoursePage from "./pages/InstructorCoursePage";
+import EvaluationPage from "./pages/EvaluationPage";
 
 function AppContent() {
   const location = useLocation();
@@ -72,6 +73,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        <Route path="/teams/:id/evaluations" element={<EvaluationPage />} />
       </Routes>
     </>
   );

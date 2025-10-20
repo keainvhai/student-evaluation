@@ -147,6 +147,27 @@ router.post("/:courseId/teams", requireAuth, async (req, res) => {
   }
 });
 
+// ✅ 获取单个课程详情
+router.get("/:courseId", requireAuth, async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const course = await db.Course.findByPk(courseId, {
+      include: [
+        {
+          model: db.User,
+          as: "instructor",
+          attributes: ["id", "name", "email"],
+        },
+      ],
+    });
+    if (!course) return res.status(404).json({ error: "Course not found" });
+    res.json(course);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch course" });
+  }
+});
+
 // ✅ 获取课程下所有 Teams
 router.get("/:courseId/teams", requireAuth, async (req, res) => {
   try {

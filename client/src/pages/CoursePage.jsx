@@ -16,9 +16,14 @@ export default function CoursePage() {
   useEffect(() => {
     async function fetchCourse() {
       try {
-        const res = await api.get(`/courses/${id}/teams`);
-        setCourse({ id });
-        setTeams(res.data);
+        // 先拿课程信息（含 title）
+        const courseRes = await api.get(`/courses/${id}`);
+        setCourse(courseRes.data);
+
+        // 再拿课程下所有团队
+        const teamRes = await api.get(`/courses/${id}/teams`);
+        // setCourse({ id });
+        setTeams(teamRes.data);
       } catch (err) {
         console.error(err);
       }
@@ -93,7 +98,7 @@ export default function CoursePage() {
 
   return (
     <div className="course-container">
-      <h2 className="course-title">Course {id}</h2>
+      <h2 className="course-title">{course?.title || "Course"}</h2>
 
       <div className="teams-section">
         <h3 className="section-title">Teams</h3>

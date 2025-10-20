@@ -1,0 +1,148 @@
+.evaluation-page {
+  padding: 2rem;
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.hint {
+  color: #777;
+  margin-bottom: 1rem;
+}
+
+.form-section label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 8px;
+  margin-top: 0.5rem;
+}
+
+.anon-toggle {
+  margin-top: 1rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.ask-ai-btn {
+  background-color: #f4f4f4;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.submit-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.toast {
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+}
+.toast.success {
+  background-color: #e0f7e9;
+  color: #2b7a0b;
+}
+.toast.error {
+  background-color: #fdecea;
+  color: #a1160a;
+}
+
+/* ===== Tabs ===== */
+.tabs {
+  display: flex;
+  gap: 0.6rem;
+  margin: 1.2rem 0;
+}
+.tabs button {
+  flex: 1;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.tabs button:hover {
+  background-color: #e5e7eb;
+}
+.tabs button.active {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+/* ===== Evaluation Lists ===== */
+.eval-list {
+  margin-top: 1rem;
+}
+.eval-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #fafafa;
+}
+.eval-meta {
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  color: #374151;
+}
+
+/* ===== All Evaluations Table ===== */
+.eval-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.eval-table th,
+.eval-table td {
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+  text-align: left;
+  font-size: 0.95rem;
+}
+.eval-table th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  10%,
+  90% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+}

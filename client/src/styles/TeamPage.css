@@ -3,11 +3,8 @@
 /* 页面容器 */
 .team-page {
   max-width: 700px;
-  /* margin: 2rem auto; */
   padding: 2rem;
   background: #ffffff;
-  /* border-radius: 16px; */
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); */
   font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   color: #1f2937;
 }
@@ -27,15 +24,12 @@
   align-items: center;
   margin-left: 10px;
   background-color: #ffffff;
-  /* color: #374151; */
   border: none;
-  /* border-radius: 8px; */
   padding: 4px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s ease;
 }
-
 .team-page .edit-btn:hover {
   background-color: #e5e7eb;
   color: #111827;
@@ -47,7 +41,6 @@
   background-color: #22c55e;
   color: #fff;
   border: none;
-  /* border-radius: 6px; */
   padding: 5px 12px;
   margin-left: 8px;
   cursor: pointer;
@@ -61,40 +54,12 @@
   background-color: #ef4444;
   color: #fff;
   border: none;
-  /* border-radius: 6px; */
   padding: 5px 12px;
   margin-left: 6px;
   cursor: pointer;
 }
 .team-page .cancel-btn:hover {
   background-color: #dc2626;
-}
-
-/* 成功 / 失败提示 */
-.team-page .message {
-  font-weight: 500;
-  margin-top: 10px;
-  opacity: 0;
-  animation: fadeIn 0.3s forwards;
-}
-
-.team-page .message.success {
-  color: #16a34a;
-}
-
-.team-page .message.error {
-  color: #dc2626;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* 小节标题 */
@@ -104,70 +69,6 @@
   font-weight: 600;
 }
 
-.evaluation-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1.5rem;
-}
-
-.anon-toggle-inline {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  gap: 6px;
-  cursor: pointer;
-  color: #374151;
-}
-
-.anon-toggle-inline input {
-  transform: scale(1.2);
-  cursor: pointer;
-}
-
-/* 表单控件样式 */
-.team-page label {
-  /* display: block; */
-  margin-top: 0.5rem;
-  font-weight: 500;
-}
-
-.team-page input,
-.team-page select,
-.team-page textarea {
-  width: 100%;
-  padding: 8px;
-  margin-top: 4px;
-  /* border-radius: 6px; */
-  border: 1px solid #d1d5db;
-  font-size: 0.95rem;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
-}
-
-.team-page input:focus,
-.team-page select:focus,
-.team-page textarea:focus {
-  border-color: #2563eb;
-  outline: none;
-}
-
-/* 提交按钮 */
-.team-page .submit-btn {
-  margin-top: 1rem;
-  background-color: #2563eb;
-  color: white;
-  font-weight: 600;
-  border: none;
-  padding: 8px 16px;
-  /* border-radius: 6px; */
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-.team-page .submit-btn:hover {
-  background-color: #1e40af;
-}
-
 /* 成员列表 */
 .team-page ul {
   list-style-type: disc;
@@ -175,7 +76,47 @@
   margin-bottom: 1rem;
 }
 
-/* ===== Toast 弹出提示 ===== */
+/* ===== 操作按钮（进入互评 / 讨论区） ===== */
+.team-page .actions {
+  margin-top: 1.8rem;
+}
+.team-page .go-eval-btn,
+.team-page .discussion-btn {
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 8px 16px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.team-page .go-eval-btn:hover,
+.team-page .discussion-btn:hover {
+  background-color: #1e40af;
+}
+
+/* ===== 请求评价部分 ===== */
+.team-page .request-section {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+.team-page .request-btn {
+  margin-top: 10px;
+  background-color: #f59e0b;
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.team-page .request-btn:hover {
+  background-color: #d97706;
+}
+
+/* ===== Toast 提示 ===== */
 .toast {
   position: fixed;
   top: 20px;
@@ -191,44 +132,22 @@
   z-index: 9999;
   animation: fadeInOut 2.5s ease forwards;
 }
-
 .toast.success {
   border-left: 5px solid #16a34a;
   color: #16a34a;
 }
-
 .toast.error {
   border-left: 5px solid #dc2626;
   color: #dc2626;
 }
 
-/* ===== Seek Evaluation 按钮 ===== */
-.team-page .request-btn {
-  margin-top: 10px;
-  background-color: #f59e0b;
-  color: white;
-  font-weight: 600;
-  border: none;
-  padding: 8px 16px;
-  /* border-radius: 6px; */
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.team-page .request-btn:hover {
-  background-color: #d97706;
-}
-
-/* 动画：淡入 → 停留 → 淡出 */
+/* Toast 动画 */
 @keyframes fadeInOut {
   0% {
     opacity: 0;
     transform: translate(-50%, -10px);
   }
-  10% {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
+  10%,
   90% {
     opacity: 1;
     transform: translate(-50%, 0);
