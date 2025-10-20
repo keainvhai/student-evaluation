@@ -95,37 +95,41 @@ router.get(
   }
 );
 
-// ✅ 获取当前小组所有评价（学生端）
+// ✅ 获取当前小组所有评价（学生端+老师区分匿名）
+// ✅ 获取当前小组所有评价（学生 & 老师共用）
 router.get("/teams/:teamId/evaluations/all", requireAuth, async (req, res) => {
   const { teamId } = req.params;
-  const evals = await db.Evaluation.findAll({
-    where: { TeamId: teamId },
-    include: [
-      { model: db.User, as: "evaluator", attributes: ["id", "name"] },
-      { model: db.User, as: "evaluatee", attributes: ["id", "name"] },
-    ],
-  });
+  const isInstructor = req.user.role === "instructor"; // 🔹 关键判断
 
-  console.log("✅ Found evaluations:", evals.length);
+  try {
+    const evals = await db.Evaluation.findAll({
+      where: { TeamId: teamId },
+      include: [
+        { model: db.User, as: "evaluator", attributes: ["id", "name"] },
+        { model: db.User, as: "evaluatee", attributes: ["id", "name"] },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
 
-  // 匿名处理逻辑
-  const result = evals.map((e) => ({
-    id: e.id,
-    score: e.score,
-    comment: e.comment,
-    anonymousToPeers: e.anonymousToPeers,
-    evaluatorId: e.evaluatorId,
-    evaluatorName:
-      e.anonymousToPeers && e.evaluatorId !== req.user.id
-        ? // ? `Anonymous ${String.fromCharCode(64 + (e.evaluatorId % 26 || 1))}`
-          `Anonymous`
-        : e.evaluator.name,
-    evaluateeName: e.evaluatee.name,
-  }));
+    const result = evals.map((e) => ({
+      id: e.id,
+      score: e.score,
+      comment: e.comment,
+      anonymousToPeers: e.anonymousToPeers,
+      evaluatorId: e.evaluatorId,
+      evaluatorName:
+        // 🔹 如果匿名 + 访问者不是老师 + 访问者不是本人 → 匿名处理
+        e.anonymousToPeers && !isInstructor && e.evaluatorId !== req.user.id
+          ? "Anonymous"
+          : e.evaluator?.name || "Unknown",
+      evaluateeName: e.evaluatee?.name || "Unknown",
+    }));
 
-  console.log("🟢 Sending result:", result);
-
-  res.json(result);
+    res.json(result);
+  } catch (err) {
+    console.error("❌ Error fetching evaluations:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
