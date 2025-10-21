@@ -1,3 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("Enrollment", {});
+  const Enrollment = sequelize.define("Enrollment", {});
+
+  Enrollment.associate = (models) => {
+    Enrollment.belongsTo(models.User, { foreignKey: "UserId" });
+    Enrollment.belongsTo(models.Course, { foreignKey: "CourseId" });
+  };
+
+  return Enrollment;
 };

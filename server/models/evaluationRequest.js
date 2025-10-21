@@ -19,5 +19,17 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
+  EvaluationRequest.associate = (models) => {
+    EvaluationRequest.belongsTo(models.Team, { foreignKey: "teamId" });
+    EvaluationRequest.belongsTo(models.User, {
+      as: "Requester",
+      foreignKey: "requesterId",
+    });
+    EvaluationRequest.belongsTo(models.User, {
+      as: "Requestee",
+      foreignKey: "requesteeId",
+    });
+  };
+
   return EvaluationRequest;
 };

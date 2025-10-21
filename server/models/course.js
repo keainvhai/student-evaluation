@@ -1,15 +1,20 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("Course", {
+  const Course = sequelize.define("Course", {
     title: DataTypes.STRING,
     code: DataTypes.STRING,
     joinToken: DataTypes.STRING,
-    description: {
-      type: DataTypes.TEXT, // 用 TEXT 比 STRING 更适合存课程简介
-      allowNull: true,
-    },
-    aiEnabled: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false, // 默认禁用
-    },
+    description: { type: DataTypes.TEXT, allowNull: true },
+    aiEnabled: { type: DataTypes.BOOLEAN, defaultValue: false },
   });
+
+  Course.associate = (models) => {
+    Course.belongsTo(models.User, {
+      as: "instructor",
+      foreignKey: "instructorId",
+    });
+    Course.hasMany(models.Enrollment, { foreignKey: "CourseId" });
+    Course.hasMany(models.Team, { foreignKey: "CourseId" });
+  };
+
+  return Course;
 };

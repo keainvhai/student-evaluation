@@ -9,5 +9,32 @@ module.exports = (sequelize, DataTypes) => {
     },
     studentId: { type: DataTypes.STRING, allowNull: true },
   });
+
+  User.associate = (models) => {
+    User.hasMany(models.Course, { foreignKey: "instructorId" });
+    User.hasMany(models.Enrollment, { foreignKey: "UserId" });
+    User.hasMany(models.TeamMembership, { foreignKey: "UserId" });
+
+    // Evaluation 关系
+    User.hasMany(models.Evaluation, {
+      as: "EvaluationsGiven",
+      foreignKey: "evaluatorId",
+    });
+    User.hasMany(models.Evaluation, {
+      as: "EvaluationsReceived",
+      foreignKey: "evaluateeId",
+    });
+
+    // EvaluationRequest
+    User.hasMany(models.EvaluationRequest, {
+      as: "RequestsSent",
+      foreignKey: "requesterId",
+    });
+    User.hasMany(models.EvaluationRequest, {
+      as: "RequestsReceived",
+      foreignKey: "requesteeId",
+    });
+  };
+
   return User;
 };

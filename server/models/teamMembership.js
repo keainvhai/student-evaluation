@@ -1,3 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("TeamMembership", {});
+  const TeamMembership = sequelize.define("TeamMembership", {});
+
+  TeamMembership.associate = (models) => {
+    TeamMembership.belongsTo(models.Team, { foreignKey: "TeamId" });
+    TeamMembership.belongsTo(models.User, { foreignKey: "UserId" });
+  };
+
+  return TeamMembership;
 };
