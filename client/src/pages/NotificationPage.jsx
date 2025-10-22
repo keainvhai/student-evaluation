@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotificationStore } from "../store/notifications";
-import "./notifications.css";
+import "../styles/NotificationsPage.css";
 
 function formatTime(iso) {
   try {

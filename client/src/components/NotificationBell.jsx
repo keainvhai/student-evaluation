@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useNotificationStore } from "../store/notifications";
-import "./NotificationBell.css";
+import "../styles/NotificationBell.css";
 
 export default function NotificationBell() {
   const { unreadCount, refreshUnread } = useNotificationStore();
