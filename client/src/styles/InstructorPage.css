@@ -1,5 +1,6 @@
 .instructor-container {
-  max-width: 600px;
+  /* max-width: 600px; */
+  min-height: 100vh;
   /* margin: 40px auto; */
   padding: 20px;
   background: #f9f9f9;

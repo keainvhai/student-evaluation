@@ -1,0 +1,29 @@
+.notif-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 8px;
+  text-decoration: none;
+}
+
+.bell-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.badge {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  transform: translate(30%, -30%);
+  min-width: 10px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #e02424; /* 红色 */
+  color: #fff;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  font-weight: 600;
+}

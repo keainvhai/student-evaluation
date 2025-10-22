@@ -1,3 +1,8 @@
-body {
+/* 让页面基础结构占满视口 */
+html,
+body,
+#root {
+  height: 100%;
   margin: 0;
+  padding: 0;
 }

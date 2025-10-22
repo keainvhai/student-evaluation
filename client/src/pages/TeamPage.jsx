@@ -22,7 +22,10 @@ export default function TeamPage() {
       try {
         const res = await api.get(`/teams/${id}`);
         setTeam(res.data);
-        setMembers(res.data.TeamMemberships.map((m) => m.User));
+        // setMembers(res.data.TeamMemberships.map((m) => m.User));
+        setMembers(
+          res.data.AllMembers || res.data.TeamMemberships.map((m) => m.User)
+        );
       } catch (err) {
         console.error("Failed to fetch team:", err);
       }

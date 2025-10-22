@@ -47,3 +47,20 @@
 .logout-btn:hover {
   background: #b91c1c;
 }
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-right button,
+.navbar-right .logout-btn {
+  margin-left: 8px;
+}
+
+.navbar-right .notification-bell {
+  position: relative;
+  font-size: 20px;
+  cursor: pointer;
+}

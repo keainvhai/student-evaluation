@@ -55,7 +55,7 @@ export default function CoursePage() {
                 ...t,
                 TeamMemberships: [
                   ...(t.TeamMemberships || []),
-                  { UserId: user?.id, User: user },
+                  { userId: user?.id, User: user },
                 ],
               }
             : t
@@ -84,7 +84,7 @@ export default function CoursePage() {
             ? {
                 ...t,
                 TeamMemberships: t.TeamMemberships.filter(
-                  (m) => m.UserId !== user?.id
+                  (m) => m.userId !== user?.id
                 ),
               }
             : t
@@ -108,7 +108,7 @@ export default function CoursePage() {
           <ul className="team-list">
             {teams.map((t) => {
               const isMember = t.TeamMemberships?.some(
-                (m) => m.UserId === user?.id
+                (m) => m.userId === user?.id
               );
 
               return (

@@ -31,7 +31,10 @@ export default function EvaluationPage() {
       try {
         const res = await api.get(`/teams/${id}`);
         setTeam(res.data);
-        setMembers(res.data.TeamMemberships.map((m) => m.User));
+        // setMembers(res.data.TeamMemberships.map((m) => m.User));
+        setMembers(
+          res.data.AllMembers || res.data.TeamMemberships.map((m) => m.User)
+        );
       } catch (err) {
         console.error("Failed to fetch team:", err);
       }
@@ -139,7 +142,7 @@ export default function EvaluationPage() {
           >
             <option value="">-- select --</option>
             {members
-              .filter((m) => m.id !== user?.id)
+              .filter((m) => m.id !== user?.id || user.role === "instructor")
               .map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.name}
