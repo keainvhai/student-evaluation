@@ -26,6 +26,7 @@ const modelFiles = [
   "teamMembership",
   "evaluation",
   "evaluationRequest",
+  "notification",
 ];
 
 for (const file of modelFiles) {

@@ -27,7 +27,7 @@ router.post("/join", requireAuth, async (req, res) => {
   if (!course) return res.status(404).json({ error: "Course not found" });
 
   await db.Enrollment.findOrCreate({
-    where: { CourseId: course.id, UserId: req.user.id },
+    where: { courseId: course.id, userId: req.user.id },
   });
   // res.json({ message: "Joined", courseId: course.id });
   res.json({ message: "Joined", course });
@@ -110,7 +110,7 @@ router.patch(
 router.get("/joined", requireAuth, requireRole("student"), async (req, res) => {
   try {
     const enrollments = await db.Enrollment.findAll({
-      where: { UserId: req.user.id },
+      where: { userId: req.user.id },
       // include: [db.Course],
       include: [
         {
@@ -138,8 +138,8 @@ router.post("/:courseId/teams", requireAuth, async (req, res) => {
     const { name } = req.body;
     if (!name) return res.status(400).json({ error: "Missing team name" });
 
-    const team = await db.Team.create({ CourseId: courseId, name });
-    await db.TeamMembership.create({ TeamId: team.id, UserId: req.user.id });
+    const team = await db.Team.create({ courseId, name });
+    await db.TeamMembership.create({ teamId: team.id, userId: req.user.id });
     res.json(team);
   } catch (err) {
     console.error(err);
@@ -173,7 +173,7 @@ router.get("/:courseId/teams", requireAuth, async (req, res) => {
   try {
     const { courseId } = req.params;
     const teams = await db.Team.findAll({
-      where: { CourseId: courseId },
+      where: { courseId },
       include: [
         {
           model: db.TeamMembership,
@@ -199,7 +199,7 @@ router.get(
 
       // 找出课程及已选学生
       const enrollments = await db.Enrollment.findAll({
-        where: { CourseId: courseId },
+        where: { courseId },
         include: [
           { model: db.User, attributes: ["id", "name", "email", "studentId"] },
         ],

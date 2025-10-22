@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = (models) => {
     User.hasMany(models.Course, { foreignKey: "instructorId" });
-    User.hasMany(models.Enrollment, { foreignKey: "UserId" });
-    User.hasMany(models.TeamMembership, { foreignKey: "UserId" });
+    User.hasMany(models.Enrollment, { foreignKey: "userId" });
+    User.hasMany(models.TeamMembership, { foreignKey: "userId" });
 
     // Evaluation 关系
     User.hasMany(models.Evaluation, {

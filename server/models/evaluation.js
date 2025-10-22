@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Evaluation.associate = (models) => {
-    Evaluation.belongsTo(models.Team, { foreignKey: "TeamId" });
+    Evaluation.belongsTo(models.Team, { foreignKey: "teamId" });
     Evaluation.belongsTo(models.User, {
       as: "evaluator",
       foreignKey: "evaluatorId",

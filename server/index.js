@@ -6,10 +6,17 @@ require("dotenv").config();
 const db = require("./models");
 
 const app = express();
+
+// app.use((req, res, next) => {
+//   console.log("➡️  [TRACE]", req.method, req.url);
+//   next();
+// });
 app.use(cors());
 app.use(express.json());
 
 // route
+app.use("/notifications", require("./routes/notifications"));
+
 app.use("/auth", require("./routes/auth"));
 app.use("/courses", require("./routes/courses"));
 app.use("/teams", require("./routes/teams"));

@@ -11,7 +11,7 @@ const router = express.Router();
 router.post("/:teamId/members", requireAuth, async (req, res) => {
   const { teamId } = req.params;
   await db.TeamMembership.findOrCreate({
-    where: { TeamId: teamId, UserId: req.user.id },
+    where: { teamId, userId: req.user.id },
   });
   res.json({ message: "Joined team" });
 });
@@ -23,7 +23,7 @@ router.delete("/:teamId/members", requireAuth, async (req, res) => {
     const userId = req.user.id; // 从 JWT 中取当前登录用户
 
     const membership = await db.TeamMembership.findOne({
-      where: { TeamId: teamId, UserId: userId },
+      where: { teamId, userId },
     });
 
     if (!membership) {
@@ -38,24 +38,55 @@ router.delete("/:teamId/members", requireAuth, async (req, res) => {
   }
 });
 
-// GET /teams/:teamId  → 获取小组详情 + 成员
+// ✅ 获取小组详情 + 成员 + 课程老师
 router.get("/:teamId", requireAuth, async (req, res) => {
-  const { teamId } = req.params;
-  const team = await db.Team.findByPk(teamId, {
-    include: [
-      {
-        model: db.TeamMembership,
-        // include: db.User,
-        include: [{ model: db.User }],
-      },
-      {
-        model: db.Course, // ✅ 加这一行
-        attributes: ["id", "title", "aiEnabled"],
-      },
-    ],
-  });
-  if (!team) return res.status(404).json({ error: "Team not found" });
-  res.json(team);
+  try {
+    const { teamId } = req.params;
+
+    const team = await db.Team.findByPk(teamId, {
+      include: [
+        {
+          model: db.TeamMembership,
+          include: [
+            {
+              model: db.User,
+              attributes: ["id", "name", "email", "role"],
+            },
+          ],
+        },
+        {
+          model: db.Course,
+          attributes: ["id", "title", "aiEnabled"],
+          include: [
+            {
+              model: db.User,
+              as: "instructor",
+              attributes: ["id", "name", "email", "role"],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!team) return res.status(404).json({ error: "Team not found" });
+
+    // ✅ 把小组成员 + 老师一起返回
+    const members = team.TeamMemberships.map((m) => m.User);
+    const instructor = team.Course?.instructor;
+
+    // 如果课程老师存在且未重复，则加入成员列表
+    if (instructor && !members.some((u) => u.id === instructor.id)) {
+      members.push(instructor);
+    }
+
+    const teamJson = team.toJSON();
+    teamJson.AllMembers = members;
+
+    res.json(teamJson);
+  } catch (err) {
+    console.error("❌ Error fetching team:", err);
+    res.status(500).json({ error: "Failed to fetch team info" });
+  }
 });
 
 // ✅ 更新小组名

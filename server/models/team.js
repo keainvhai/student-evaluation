@@ -4,9 +4,9 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Team.associate = (models) => {
-    Team.belongsTo(models.Course, { foreignKey: "CourseId" });
-    Team.hasMany(models.TeamMembership, { foreignKey: "TeamId" });
-    Team.hasMany(models.Evaluation, { foreignKey: "TeamId" });
+    Team.belongsTo(models.Course, { foreignKey: "courseId" });
+    Team.hasMany(models.TeamMembership, { foreignKey: "teamId" });
+    Team.hasMany(models.Evaluation, { foreignKey: "teamId" });
     Team.hasMany(models.EvaluationRequest, { foreignKey: "teamId" });
   };
 

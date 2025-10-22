@@ -1,9 +1,172 @@
 const express = require("express");
 const router = express.Router();
-const { EvaluationRequest, TeamMembership } = require("../models");
+const db = require("../models");
+const { EvaluationRequest, TeamMembership } = db;
 const { requireAuth } = require("../middleware/auth");
 
 // ✅ 发起评价请求
+// router.post(
+//   "/teams/:teamId/evaluation-requests",
+//   requireAuth,
+//   async (req, res) => {
+//     try {
+//       const { requestee_id } = req.body;
+//       const teamId = req.params.teamId;
+//       const requesterId = req.user.id;
+
+//       console.log(
+//         "teamId:",
+//         teamId,
+//         "requesterId:",
+//         requesterId,
+//         "requestee_id:",
+//         requestee_id
+//       );
+
+//       // // 确认双方在同一小组
+//       // const requesterInTeam = await TeamMembership.findOne({
+//       //   where: { teamId, userId: requesterId },
+//       // });
+//       // const requesteeInTeam = await TeamMembership.findOne({
+//       //   where: { teamId, userId: requestee_id },
+//       // });
+
+//       // // console.log("requesterInTeam:", requesterInTeam);
+//       // // console.log("requesteeInTeam:", requesteeInTeam);
+
+//       // if (!requesterInTeam || !requesteeInTeam) {
+//       //   return res
+//       //     .status(403)
+//       //     .json({ error: "Both users must be in the same team." });
+//       // }
+
+//       // 🔹 判断是否老师或同组成员
+//       const requester = await db.User.findByPk(requesterId);
+//       const requestee = await db.User.findByPk(requestee_id);
+
+//       // 🔹 查询双方在不在该 team
+//       const requesterInTeam = await TeamMembership.findOne({
+//         where: { teamId, userId: requesterId },
+//       });
+//       const requesteeInTeam = await TeamMembership.findOne({
+//         where: { teamId, userId: requestee_id },
+//       });
+
+//       // ✅ 允许以下几种情况通过：
+//       // 1. 双方都在同一 team
+//       // 2. 一方是 instructor（老师）且双方在同一课程下
+//       const team = await db.Team.findByPk(teamId, {
+//         include: { model: db.Course, attributes: ["id", "instructorId"] },
+//       });
+
+//       const isInstructor = requester.role === "instructor";
+//       const isRequesteeInstructor = requestee.role === "instructor";
+//       const isCourseInstructor =
+//         team && team.Course && team.Course.instructorId === requesterId;
+//       // ✅ 合法条件：
+//       // 1. 双方都在同一 team ✅
+//       // 2. 请求者是课程老师（可以跨组）✅
+//       // 3. 学生请求课程老师（允许）✅
+//       if (
+//         !(
+//           (requesterInTeam && requesteeInTeam) ||
+//           isCourseInstructor ||
+//           isRequesteeInstructor
+//         )
+//       ) {
+//         return res.status(403).json({
+//           error:
+//             "You can only request evaluations from your teammates or course instructor.",
+//         });
+//       }
+//       // const sameCourse =
+//       //   team && team.Course.instructorId === requesterId
+//       //     ? true
+//       //     : team && team.Course.instructorId === requestee_id
+//       //     ? true
+//       //     : false;
+//       // if (
+//       //   (!requesterInTeam || !requesteeInTeam) &&
+//       //   !sameCourse &&
+//       //   requester.role !== "instructor"
+//       // ) {
+//       //   return res
+//       //     .status(403)
+//       //     .json({ error: "Must be teammates or instructor of this course." });
+//       // }
+
+//       // 检查是否已有待处理请求
+//       const existing = await EvaluationRequest.findOne({
+//         where: {
+//           teamId,
+//           requesterId,
+//           requesteeId: requestee_id,
+//           status: "pending",
+//         },
+//       });
+
+//       if (existing) {
+//         console.log(
+//           "⚠️ Found existing pending request, sending reminder notification..."
+//         );
+
+//         // ✅ 即使已有请求，也创建一个“提醒通知”
+//         try {
+//           const requesterName = req.user.name || "Someone";
+//           await db.Notification.create({
+//             userId: requestee_id, // 被请求人
+//             type: "evaluation_request",
+//             title: "Reminder: Evaluation Request Still Pending",
+//             body: `${requesterName} requested your evaluation (still pending).`,
+//             link: `/teams/${teamId}/evaluations`,
+//           });
+//           console.log(`✅ Reminder notification sent for existing request`);
+//         } catch (notifyErr) {
+//           console.error(
+//             "⚠️ Failed to create reminder notification:",
+//             notifyErr
+//           );
+//         }
+
+//         return res.json(existing); // ✅ 返回现有请求
+//       }
+
+//       // 没有重复，则创建新请求
+//       const newRequest = await EvaluationRequest.create({
+//         teamId,
+//         requesterId,
+//         requesteeId: requestee_id,
+//         status: "pending",
+//       });
+
+//       // ✅ 发送通知给被请求人
+//       try {
+//         const requester = req.user.name || "Someone";
+//         await db.Notification.create({
+//           userId: requestee_id, // 被请求人
+//           type: "evaluation_request",
+//           title: "New Evaluation Request",
+//           body: `${requester} requested your evaluation.`,
+//           link: `/teams/${teamId}/evaluations`,
+//         });
+//       } catch (notifyErr) {
+//         console.error(
+//           "⚠️ Failed to create notification for requestee:",
+//           notifyErr
+//         );
+//       }
+
+//       res.json(newRequest);
+//     } catch (err) {
+//       console.error("❌ Failed to create evaluation request:", err);
+//       res
+//         .status(500)
+//         .json({ error: "Server error creating evaluation request" });
+//     }
+//   }
+// );
+
+// ✅ 发起评价请求（允许学生请求老师，老师可跨组请求学生）
 router.post(
   "/teams/:teamId/evaluation-requests",
   requireAuth,
@@ -13,7 +176,10 @@ router.post(
       const teamId = req.params.teamId;
       const requesterId = req.user.id;
 
-      // 确认双方在同一小组
+      const requester = await db.User.findByPk(requesterId);
+      const requestee = await db.User.findByPk(requestee_id);
+
+      // 查询双方在当前 team 的成员记录
       const requesterInTeam = await TeamMembership.findOne({
         where: { teamId, userId: requesterId },
       });
@@ -21,13 +187,36 @@ router.post(
         where: { teamId, userId: requestee_id },
       });
 
-      if (!requesterInTeam || !requesteeInTeam) {
-        return res
-          .status(403)
-          .json({ error: "Both users must be in the same team." });
+      // 拿到课程信息（用来判断老师和学生的关系）
+      const team = await db.Team.findByPk(teamId, {
+        include: { model: db.Course, attributes: ["id", "instructorId"] },
+      });
+
+      const isRequesterInstructor = requester.role === "instructor";
+      const isRequesteeInstructor = requestee.role === "instructor";
+      const isCourseInstructor =
+        team && team.Course && team.Course.instructorId === requesterId;
+
+      // ✅ 合法条件：
+      // 1. 同组学生互相请求
+      // 2. 老师（课程 instructor）向任何课程学生请求
+      // 3. 学生向课程老师请求
+      if (
+        !(
+          (
+            (requesterInTeam && requesteeInTeam) || // 同组
+            isCourseInstructor || // 老师发请求
+            isRequesteeInstructor
+          ) // 学生请求老师
+        )
+      ) {
+        return res.status(403).json({
+          error:
+            "You can only request evaluations from your teammates or your course instructor.",
+        });
       }
 
-      // 检查是否已有待处理请求
+      // 检查是否已有未处理请求
       const existing = await EvaluationRequest.findOne({
         where: {
           teamId,
@@ -36,8 +225,18 @@ router.post(
           status: "pending",
         },
       });
+
       if (existing) {
-        return res.status(400).json({ error: "Request already pending." });
+        // 已存在请求则发提醒通知
+        const requesterName = requester.name || "Someone";
+        await db.Notification.create({
+          userId: requestee_id,
+          type: "evaluation_request",
+          title: "Reminder: Evaluation Request Still Pending",
+          body: `${requesterName} requested your evaluation (still pending).`,
+          link: `/teams/${teamId}/evaluations`,
+        });
+        return res.json(existing);
       }
 
       // 创建新请求
@@ -47,6 +246,20 @@ router.post(
         requesteeId: requestee_id,
         status: "pending",
       });
+
+      // 通知被请求人
+      try {
+        const requesterName = requester.name || "Someone";
+        await db.Notification.create({
+          userId: requestee_id,
+          type: "evaluation_request",
+          title: "New Evaluation Request",
+          body: `${requesterName} requested your evaluation.`,
+          link: `/teams/${teamId}/evaluations`,
+        });
+      } catch (notifyErr) {
+        console.error("⚠️ Failed to create notification:", notifyErr);
+      }
 
       res.json(newRequest);
     } catch (err) {
