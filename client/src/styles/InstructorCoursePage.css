@@ -1,5 +1,6 @@
 .instructor-course-page {
-  max-width: 900px;
+  /* max-width: 900px; */
+  min-height: 100vh;
   /* margin: 40px auto; */
   padding: 24px;
   font-family: "Inter", sans-serif;

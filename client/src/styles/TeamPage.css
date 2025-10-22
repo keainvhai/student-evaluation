@@ -3,6 +3,8 @@
 /* 页面容器 */
 .team-page {
   max-width: 700px;
+  margin: 0 auto;
+  min-height: 100vh;
   padding: 2rem;
   background: #ffffff;
   font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
