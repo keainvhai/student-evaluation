@@ -199,17 +199,7 @@ router.post(
 
       // ✅ 合法条件：
       // 1. 同组学生互相请求
-      // 2. 老师（课程 instructor）向任何课程学生请求
-      // 3. 学生向课程老师请求
-      if (
-        !(
-          (
-            (requesterInTeam && requesteeInTeam) || // 同组
-            isCourseInstructor || // 老师发请求
-            isRequesteeInstructor
-          ) // 学生请求老师
-        )
-      ) {
+      if (!(requesterInTeam && requesteeInTeam)) {
         return res.status(403).json({
           error:
             "You can only request evaluations from your teammates or your course instructor.",

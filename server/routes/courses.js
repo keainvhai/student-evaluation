@@ -139,7 +139,11 @@ router.post("/:courseId/teams", requireAuth, async (req, res) => {
     if (!name) return res.status(400).json({ error: "Missing team name" });
 
     const team = await db.Team.create({ courseId, name });
-    await db.TeamMembership.create({ teamId: team.id, userId: req.user.id });
+    // ✅ 只有学生创建才自动加入
+    if (req.user.role === "student") {
+      await db.TeamMembership.create({ TeamId: team.id, UserId: req.user.id });
+    }
+    // await db.TeamMembership.create({ teamId: team.id, userId: req.user.id });
     res.json(team);
   } catch (err) {
     console.error(err);

@@ -19,6 +19,18 @@ router.post("/teams/:teamId/evaluations", requireAuth, async (req, res) => {
     include: { model: db.Course, attributes: ["id", "instructorId"] },
   });
 
+  if (!evaluator || !evaluatee) {
+    return res.status(404).json({ error: "User not found." });
+  }
+
+  // 🚫 禁止学生给老师打分
+  if (evaluator.role === "student" && evaluatee.role === "instructor") {
+    return res.status(403).json({
+      error: "Students cannot evaluate instructors.",
+    });
+  }
+
+  //  检查双方是否在同一 team
   const evaluatorInTeam = await db.TeamMembership.findOne({
     where: { teamId, userId: evaluatorId },
   });
@@ -26,30 +38,13 @@ router.post("/teams/:teamId/evaluations", requireAuth, async (req, res) => {
     where: { teamId, userId: evaluateeId },
   });
 
-  const isInstructor = evaluator.role === "instructor";
-  const isEvaluateeInstructor = evaluatee.role === "instructor";
-  const isCourseInstructor =
-    team && team.Course && team.Course.instructorId === evaluatorId;
-
-  // ✅ 允许条件：
-  // 1. 双方在同一 team
-  // 2. 老师（课程 instructor）评价任意学生
-  // 3. 学生评价课程老师
-  if (
-    !(
-      (evaluatorInTeam && evaluateeInTeam) ||
-      isInstructor ||
-      isEvaluateeInstructor ||
-      isCourseInstructor
-    )
-  ) {
+  if (!(evaluatorInTeam && evaluateeInTeam)) {
     return res.status(403).json({
-      error:
-        "You can only evaluate your teammates, your course instructor, or if you're the instructor, any student in this course.",
+      error: "You can only evaluate your teammates.",
     });
   }
 
-  // ✅ 确认通过后再创建
+  // ✅ 确认通过后再创建互评
   const evalObj = await db.Evaluation.create({
     teamId,
     evaluatorId,
