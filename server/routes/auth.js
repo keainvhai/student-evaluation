@@ -8,6 +8,8 @@ const router = express.Router();
 
 // 注册
 router.post("/register", async (req, res) => {
+  console.log("📩 Register body:", req.body);
+
   const { name, email, password, role, studentId } = req.body;
   try {
     const hash = await bcrypt.hash(password, 8);

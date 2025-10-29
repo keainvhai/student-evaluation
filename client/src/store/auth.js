@@ -25,13 +25,13 @@ export const useAuthStore = create((set) => ({
   //   return user;
   // },
 
-  register: async (name, email, password, role, student_id) => {
+  register: async (name, email, password, role, studentId) => {
     await api.post("/auth/register", {
       name,
       email,
       password,
       role,
-      student_id,
+      studentId,
     });
   },
 
