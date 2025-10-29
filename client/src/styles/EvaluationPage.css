@@ -25,6 +25,13 @@
   font-weight: 500;
 }
 
+.hint {
+  color: #777;
+  margin: 0;
+  font-style: italic; /* ✅ 加上斜体 */
+  line-height: 1.4;
+}
+
 textarea {
   width: 100%;
   min-height: 100px;

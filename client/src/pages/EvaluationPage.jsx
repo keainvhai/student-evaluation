@@ -160,6 +160,11 @@ export default function EvaluationPage() {
           />
 
           <label>Comment:</label>
+          <p className="hint">
+            You may write your feedback from these aspects: role, contributions,
+            collaboration, strengths, improvements.
+          </p>
+
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}

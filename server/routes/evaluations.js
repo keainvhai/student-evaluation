@@ -78,6 +78,7 @@ router.post("/teams/:teamId/evaluations", requireAuth, async (req, res) => {
 // ✅ 获取当前用户收到的所有评价
 router.get("/teams/:teamId/evaluations/me", requireAuth, async (req, res) => {
   const { teamId } = req.params;
+  const isInstructor = req.user.role === "instructor";
 
   try {
     const evals = await db.Evaluation.findAll({
@@ -98,7 +99,10 @@ router.get("/teams/:teamId/evaluations/me", requireAuth, async (req, res) => {
       anonymousToPeers: e.anonymousToPeers,
       evaluatorId: e.evaluatorId,
       evaluatorName:
-        e.anonymousToPeers && e.evaluatorId !== req.user.id
+        // ✅ 老师可以始终看到真实姓名
+        isInstructor
+          ? e.evaluator.name
+          : e.anonymousToPeers && e.evaluatorId !== req.user.id
           ? "Anonymous"
           : e.evaluator.name,
     }));
