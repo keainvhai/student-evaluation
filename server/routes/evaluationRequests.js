@@ -296,4 +296,94 @@ router.patch("/evaluation-requests/:id", requireAuth, async (req, res) => {
   res.json(request);
 });
 
+// ✅ 老师跨组请求学生提交互评（课程层）
+router.post(
+  "/courses/:courseId/evaluation-requests",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const { requestee_id } = req.body;
+      const { courseId } = req.params;
+      const requesterId = req.user.id;
+
+      const requester = await db.User.findByPk(requesterId);
+      const requestee = await db.User.findByPk(requestee_id);
+      const course = await db.Course.findByPk(courseId, {
+        include: {
+          model: db.User,
+          as: "instructor",
+          attributes: ["id", "name"],
+        },
+      });
+
+      if (!course) return res.status(404).json({ error: "Course not found" });
+      if (!requestee) return res.status(404).json({ error: "User not found" });
+
+      // ✅ 权限检查：老师或课程 instructor 才能发起
+      if (
+        requester.role !== "instructor" ||
+        course.instructorId !== requesterId
+      ) {
+        return res
+          .status(403)
+          .json({ error: "Only course instructor can request evaluations." });
+      }
+
+      // ✅ 自动查出学生在该课程下的 team
+      const membership = await db.TeamMembership.findOne({
+        include: [
+          {
+            model: db.Team,
+            where: { courseId },
+            attributes: ["id", "name"],
+          },
+        ],
+        where: { userId: requestee_id },
+      });
+
+      const teamId = membership ? membership.teamId : null;
+
+      // 检查是否已有 pending 请求
+      const existing = await db.EvaluationRequest.findOne({
+        where: {
+          teamId,
+          requesterId,
+          requesteeId: requestee_id,
+          status: "pending",
+        },
+      });
+      if (existing) {
+        return res.status(400).json({ error: "Request already pending." });
+      }
+
+      // ✅ 创建新请求
+      const newRequest = await db.EvaluationRequest.create({
+        teamId,
+        requesterId,
+        requesteeId: requestee_id,
+        status: "pending",
+      });
+
+      // ✅ 通知学生
+      await db.Notification.create({
+        userId: requestee_id,
+        type: "evaluation_request",
+        title: `Evaluation Request from ${course.title}`,
+        body: `Your instructor ${requester.name} requested you to complete a course evaluation.`,
+        link: `/teams/${teamId}/evaluations`,
+      });
+
+      res.json(newRequest);
+    } catch (err) {
+      console.error(
+        "❌ Failed to create course-level evaluation request:",
+        err
+      );
+      res
+        .status(500)
+        .json({ error: "Server error creating evaluation request." });
+    }
+  }
+);
+
 module.exports = router;

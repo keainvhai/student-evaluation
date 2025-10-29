@@ -1,0 +1,38 @@
+.request-eval-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.student-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.student-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+button {
+  padding: 5px 10px;
+}
+
+.toast {
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.toast.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.toast.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}

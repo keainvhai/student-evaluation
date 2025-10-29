@@ -226,6 +226,18 @@ export default function InstructorCoursePage() {
               roster.map((s) => (
                 <li key={s.id}>
                   {s.name} <span className="email">({s.email})</span>
+                  <div className="roster-actions">
+                    <Link
+                      to={`/courses/${id}/evaluations/seek?student=${s.id}`}
+                    >
+                      <button className="btn-small">⭐ Evaluate</button>
+                    </Link>
+                    <Link
+                      to={`/courses/${id}/evaluations/request?student=${s.id}`}
+                    >
+                      <button className="btn-small">📨 Request</button>
+                    </Link>
+                  </div>
                 </li>
               ))
             )}
@@ -250,6 +262,21 @@ export default function InstructorCoursePage() {
             ))}
           </ul>
         )}
+      </section>
+
+      {/* --- Evaluations Section --- */}
+      <section className="card-section">
+        <div className="section-header">
+          <h3>Evaluations</h3>
+        </div>
+        <div className="button-group">
+          <Link to={`/courses/${id}/evaluations/give`}>
+            <button className="btn-seek">⭐ Give Evaluation</button>
+          </Link>
+          <Link to={`/courses/${id}/evaluations/request`}>
+            <button className="btn-request">📨 Request Evaluation</button>
+          </Link>
+        </div>
       </section>
     </div>
   );

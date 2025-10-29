@@ -192,4 +192,82 @@ router.get("/teams/:teamId/evaluations/all", requireAuth, async (req, res) => {
   }
 });
 
+// ✅ 老师跨组打分（课程层）
+router.post("/courses/:courseId/evaluations", requireAuth, async (req, res) => {
+  try {
+    const { evaluateeId, score, comment, anonymousToPeers } = req.body;
+    const { courseId } = req.params;
+    const evaluatorId = req.user.id;
+
+    const evaluator = await db.User.findByPk(evaluatorId);
+    const evaluatee = await db.User.findByPk(evaluateeId);
+    const course = await db.Course.findByPk(courseId, {
+      include: { model: db.User, as: "instructor", attributes: ["id", "name"] },
+    });
+
+    if (!course) return res.status(404).json({ error: "Course not found" });
+    if (!evaluatee)
+      return res.status(404).json({ error: "Evaluatee not found" });
+
+    // ✅ 权限：老师或课程 instructor 才能跨组打分
+    if (
+      evaluator.role !== "instructor" ||
+      course.instructorId !== evaluatorId
+    ) {
+      return res
+        .status(403)
+        .json({ error: "Only course instructor can evaluate students." });
+    }
+
+    // ✅ 自动获取该学生在本课程下的 team
+    const membership = await db.TeamMembership.findOne({
+      include: [
+        {
+          model: db.Team,
+          where: { courseId },
+          attributes: ["id", "name"],
+        },
+      ],
+      where: { userId: evaluateeId },
+    });
+
+    const teamId = membership ? membership.teamId : null; // 如果学生未分组，也允许为 null
+
+    // ✅ 创建 Evaluation（不依赖 teamId）
+    const evaluation = await db.Evaluation.create({
+      teamId,
+      evaluatorId,
+      evaluateeId,
+      score,
+      comment,
+      // anonymousToPeers: false, // 老师始终实名
+      anonymousToPeers,
+    });
+
+    // ✅ 通知学生
+    try {
+      const displayName = anonymousToPeers
+        ? "Anonymous"
+        : evaluator.name || "Someone";
+      await db.Notification.create({
+        userId: evaluateeId,
+        type: "evaluation_received",
+        title: `New Evaluation from ${course.title}`,
+        body: `You received ${displayName}'s feedback in ${course.title}.`,
+        // link: teamId
+        //   ? `/teams/${teamId}/evaluations`
+        //   : `/courses/${courseId}/evaluations`,
+        link: `/teams/${teamId}/evaluations`,
+      });
+    } catch (notifyErr) {
+      console.error("⚠️ Failed to create notification:", notifyErr);
+    }
+
+    res.json(evaluation);
+  } catch (err) {
+    console.error("❌ Failed to create evaluation:", err);
+    res.status(500).json({ error: "Server error creating evaluation." });
+  }
+});
+
 module.exports = router;

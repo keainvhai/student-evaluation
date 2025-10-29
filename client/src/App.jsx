@@ -18,6 +18,8 @@ import { useAuthStore } from "./store/auth";
 import InstructorCoursePage from "./pages/InstructorCoursePage";
 import EvaluationPage from "./pages/EvaluationPage";
 import NotificationPage from "./pages/NotificationPage";
+import RequestEvaluationPage from "./pages/RequestEvaluationPage";
+import GiveEvaluationPage from "./pages/GiveEvaluationPage";
 
 function AppContent() {
   const location = useLocation();
@@ -76,6 +78,14 @@ function AppContent() {
         />
         <Route path="/teams/:id/evaluations" element={<EvaluationPage />} />
         <Route path="/notifications" element={<NotificationPage />} />
+        <Route
+          path="/courses/:id/evaluations/give"
+          element={<GiveEvaluationPage />}
+        />
+        <Route
+          path="/courses/:id/evaluations/request"
+          element={<RequestEvaluationPage />}
+        />
       </Routes>
     </>
   );
