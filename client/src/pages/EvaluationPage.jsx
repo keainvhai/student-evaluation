@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import api from "../api";
 import { useAuthStore } from "../store/auth";
 import FloatingAIAssistant from "../components/FloatingAIAssistant";
@@ -7,6 +7,14 @@ import "../styles/EvaluationPage.css";
 
 export default function EvaluationPage() {
   const { id } = useParams(); // teamId
+
+  const location = useLocation();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get("tab");
+    if (tabParam) setTab(tabParam); // ✅ 根据 URL 设置初始 tab
+  }, [location.search]);
+
   // const navigate = useNavigate();
   const { user } = useAuthStore();
 

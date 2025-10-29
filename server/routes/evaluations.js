@@ -66,7 +66,7 @@ router.post("/teams/:teamId/evaluations", requireAuth, async (req, res) => {
       type: "evaluation_received",
       title: `New Evaluation Received in ${team.Course.title}`,
       body: `You received ${evaluatorDisplay}'s feedback from your team in ${team.Course.title}.`,
-      link: `/teams/${teamId}/evaluations`,
+      link: `/teams/${teamId}/evaluations?tab=received`,
     });
   } catch (notifyErr) {
     console.error("⚠️ Failed to create notification:", notifyErr);
@@ -257,7 +257,7 @@ router.post("/courses/:courseId/evaluations", requireAuth, async (req, res) => {
         // link: teamId
         //   ? `/teams/${teamId}/evaluations`
         //   : `/courses/${courseId}/evaluations`,
-        link: `/teams/${teamId}/evaluations`,
+        link: `/teams/${teamId}/evaluations?tab=received`,
       });
     } catch (notifyErr) {
       console.error("⚠️ Failed to create notification:", notifyErr);
