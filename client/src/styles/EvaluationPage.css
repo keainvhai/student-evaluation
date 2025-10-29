@@ -138,6 +138,23 @@ textarea {
   background-color: #f3f4f6;
   font-weight: 600;
 }
+.eval-meta {
+  display: flex;
+  justify-content: space-between; /* ✅ 左右分布 */
+  align-items: center;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  color: #374151;
+}
+
+.meta-left {
+  font-weight: 500;
+}
+
+.meta-right {
+  font-size: 0.85rem;
+  color: #888;
+}
 
 @keyframes fadeInOut {
   0% {

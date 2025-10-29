@@ -198,8 +198,15 @@ export default function EvaluationPage() {
             received.map((r) => (
               <div key={r.id} className="eval-card">
                 <div className="eval-meta">
-                  <strong>{r.evaluatorName || `Anon-${r.evaluatorId}`}</strong>{" "}
-                  — ⭐ {r.score}
+                  <div className="meta-left">
+                    <strong>
+                      {r.evaluatorName || `Anon-${r.evaluatorId}`}
+                    </strong>{" "}
+                    — ⭐ {r.score}
+                  </div>
+                  <div className="meta-right">
+                    {new Date(r.createdAt).toLocaleString()}
+                  </div>
                 </div>
                 <p>{r.comment}</p>
               </div>
@@ -218,7 +225,12 @@ export default function EvaluationPage() {
             given.map((g) => (
               <div key={g.id} className="eval-card">
                 <div className="eval-meta">
-                  To <strong>{g.evaluateeName}</strong> — ⭐ {g.score}
+                  <div className="meta-left">
+                    To <strong>{g.evaluateeName}</strong> — ⭐ {g.score}
+                  </div>
+                  <div className="meta-right">
+                    {new Date(g.createdAt).toLocaleString()}
+                  </div>
                 </div>
                 <p>{g.comment}</p>
               </div>
@@ -241,6 +253,7 @@ export default function EvaluationPage() {
                   <th>Evaluatee</th>
                   <th>Score</th>
                   <th>Comment</th>
+                  <th>Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -250,6 +263,7 @@ export default function EvaluationPage() {
                     <td>{e.evaluateeName}</td>
                     <td>{e.score}</td>
                     <td>{e.comment}</td>
+                    <td>{new Date(e.createdAt).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>

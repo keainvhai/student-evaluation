@@ -105,6 +105,7 @@ router.get("/teams/:teamId/evaluations/me", requireAuth, async (req, res) => {
           : e.anonymousToPeers && e.evaluatorId !== req.user.id
           ? "Anonymous"
           : e.evaluator.name,
+      createdAt: e.createdAt,
     }));
 
     console.log("🟢 My Received:", result);
@@ -141,6 +142,7 @@ router.get(
         evaluateeId: e.evaluateeId,
         evaluateeName: e.evaluatee?.name || "Unknown",
         anonymousToPeers: e.anonymousToPeers,
+        createdAt: e.createdAt,
       }));
 
       console.log("🟢 My Given:", result);
@@ -180,6 +182,7 @@ router.get("/teams/:teamId/evaluations/all", requireAuth, async (req, res) => {
           ? "Anonymous"
           : e.evaluator?.name || "Unknown",
       evaluateeName: e.evaluatee?.name || "Unknown",
+      createdAt: e.createdAt,
     }));
 
     res.json(result);
