@@ -16,7 +16,7 @@ router.post("/teams/:teamId/evaluations", requireAuth, async (req, res) => {
 
   // ✅ 获取课程信息（用于老师跨组）
   const team = await db.Team.findByPk(teamId, {
-    include: { model: db.Course, attributes: ["id", "instructorId"] },
+    include: { model: db.Course, attributes: ["id", "instructorId", "title"] },
   });
 
   if (!evaluator || !evaluatee) {
@@ -64,8 +64,8 @@ router.post("/teams/:teamId/evaluations", requireAuth, async (req, res) => {
     await db.Notification.create({
       userId: evaluateeId,
       type: "evaluation_received",
-      title: "New Evaluation Received",
-      body: `${evaluatorDisplay} submitted an evaluation for you.`,
+      title: `New Evaluation Received in ${team.Course.title}`,
+      body: `You received ${evaluatorDisplay}'s feedback from your team in ${team.Course.title}.`,
       link: `/teams/${teamId}/evaluations`,
     });
   } catch (notifyErr) {

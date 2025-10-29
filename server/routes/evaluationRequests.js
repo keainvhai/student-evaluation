@@ -189,7 +189,10 @@ router.post(
 
       // 拿到课程信息（用来判断老师和学生的关系）
       const team = await db.Team.findByPk(teamId, {
-        include: { model: db.Course, attributes: ["id", "instructorId"] },
+        include: {
+          model: db.Course,
+          attributes: ["id", "instructorId", "title"],
+        },
       });
 
       const isRequesterInstructor = requester.role === "instructor";
@@ -240,11 +243,15 @@ router.post(
       // 通知被请求人
       try {
         const requesterName = requester.name || "Someone";
+
+        // 获取课程标题
+        const courseName = team?.Course?.title || "your course";
+
         await db.Notification.create({
           userId: requestee_id,
           type: "evaluation_request",
-          title: "New Evaluation Request",
-          body: `${requesterName} requested your evaluation.`,
+          title: `Evaluation Request in ${courseName}`,
+          body: `${requesterName} reminded you about an evaluation request from your team in ${courseName}.`,
           link: `/teams/${teamId}/evaluations`,
         });
       } catch (notifyErr) {
