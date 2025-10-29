@@ -228,7 +228,7 @@ export default function InstructorCoursePage() {
                   {s.name} <span className="email">({s.email})</span>
                   <div className="roster-actions">
                     <Link
-                      to={`/courses/${id}/evaluations/seek?student=${s.id}`}
+                      to={`/courses/${id}/evaluations/give?student=${s.id}`}
                     >
                       <button className="btn-small">⭐ Evaluate</button>
                     </Link>
